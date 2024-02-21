@@ -52,7 +52,7 @@ class Session < ApplicationRecord
     device_id = device_id(request)
 
     if user_sessions.exists?(device_id: device_id)
-      return { status: 201, message: 'Anda telah berhasil login', data: { user: user.new_attributes, token: user_sessions.find_by(device_id: device_id).token } }
+      return { status: 200, message: 'Anda telah berhasil login', data: { user: user.new_attributes, token: user_sessions.find_by(device_id: device_id).token } }
     else
       device = DeviceDetector.new(request.headers['User-Agent'])
       session = Session.create({
@@ -63,7 +63,7 @@ class Session < ApplicationRecord
         user_id: user.id,
         last_active: Time.now
       })
-      return { status: 201, message: 'Anda telah berhasil login', data: { user: user.new_attributes, token: session.token } }
+      return { status: 200, message: 'Anda telah berhasil login', data: { user: user.new_attributes, token: session.token } }
     end
   end
 

@@ -31,13 +31,13 @@ class User < ApplicationRecord
 
   def generate_password_reset_token
     self.reset_password_token = SecureRandom.urlsafe_base64
-    self.reset_password_sent_at = Time.zone.now
+    self.reset_password_token_sent_at = Time.zone.now
     save(validate: false)
   end
 
   def reset_password_token_used
     self.reset_password_token = nil
-    self.reset_password_sent_at = nil
+    self.reset_password_token_sent_at = nil
     save
   end
 
@@ -140,12 +140,26 @@ class User < ApplicationRecord
     params.permit(:name, :email, :password)
   end
 
+  # def self.verify_account params
+  #   return { status: 404, message: "Token tidak ditemukan" } if params['token_verification'].blank?
+    
+  #   user = User.find_by(confirm_token: params['token_verification'])
+  #   return { status: 422, message: 'Token invalid, mohon lakukan pengiriman ulang' } if user.blank?
+  #   return { status: 422, message: 'Token verifikasi telah kadaluarsa' } if user.confirm_token_sent_at + 5.days < Time.now
+  #   return { status: 422, message: 'Email telah diverifikasi sebelumnya!' } if user.email_confirmed?
+  #   return { status: 200, message: 'Verifikasi Sukses, Silahkan Login' } if user.update_attribute(:email_confirmed, true)
+  # end
+
   def self.verify_account params
     return { status: 404, message: "Token tidak ditemukan" } if params['token_verification'].blank?
     
     user = User.find_by(confirm_token: params['token_verification'])
     return { status: 422, message: 'Token invalid, mohon lakukan pengiriman ulang' } if user.blank?
-    return { status: 422, message: 'Token verifikasi telah kadaluarsa' } if user.confirm_token_sent_at + 5.days < Time.now
+    
+    # Convert confirm_token_sent_at to a DateTime object before adding 5 days
+    confirm_token_sent_at = Time.zone.parse(user.confirm_token_sent_at)
+    
+    return { status: 422, message: 'Token verifikasi telah kadaluarsa' } if confirm_token_sent_at + 5.days < Time.zone.now
     return { status: 422, message: 'Email telah diverifikasi sebelumnya!' } if user.email_confirmed?
     return { status: 200, message: 'Verifikasi Sukses, Silahkan Login' } if user.update_attribute(:email_confirmed, true)
   end
@@ -163,7 +177,7 @@ class User < ApplicationRecord
     # skip_password_validation = true
     if update(profile_params) && avatar.update(avatar_params)
       avatar.user_email = email
-      return { status: 200, message: 'Profil berhasil diperbarui', data: profile_attributes }
+      return { status: 201, message: 'Profil berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
       return { status: 422, message: error_messages }
@@ -173,7 +187,7 @@ class User < ApplicationRecord
   def remove_avatar
     if avatar.update(image: nil)
       avatar.user_email = email
-      return { status: 200, message: 'Profil berhasil diperbarui', data: profile_attributes }
+      return { status: 201, message: 'Profil berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
       return { status: 422, message: error_messages }
@@ -193,7 +207,7 @@ class User < ApplicationRecord
 
     if password_match?(params[:current_password]) && update(params.except(:current_password, :name, :email, :bio))
       Session.find_by(user_id: self.id).destroy
-      return { status: 200, message: 'Password berhasil diperbarui', data: profile_attributes }
+      return { status: 201, message: 'Password berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
       return { status: 422, message: error_messages }
@@ -248,7 +262,7 @@ class User < ApplicationRecord
     if user
       user.generate_password_reset_token
       ForgotPasswordMailer.password_reset(user).deliver_now
-      return { status: 200, message: 'Email reset password telah dikirim.', data: user }
+      return { status: 201, message: 'Email reset password telah dikirim.', data: user }
     else
       return { status: 500, message: 'Terjadi kesalahan dalam mengirim email' }
     end
@@ -256,10 +270,10 @@ class User < ApplicationRecord
 
   def self.reset_password(reset_password_token, password_params)
     user = User.find_by(reset_password_token: reset_password_token)
-    if user && user.reset_password_sent_at >= 2.hours.ago
+    if user && user.reset_password_token_sent_at >= 2.hours.ago
       if user.update(password_params)
         user.reset_password_token_used
-        return { status: 200, message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
+        return { status: 201, message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
       else
         return { status: 422, message: 'Gagal memperbarui password.', data: user.errors }
       end
@@ -271,9 +285,9 @@ class User < ApplicationRecord
   def self.check_reset_token(token)
     user = User.find_by(reset_password_token: token)
 
-    if user.nil? || user.reset_password_sent_at.nil?
+    if user.nil? || user.reset_password_token_sent_at.nil?
       return { status: 404, message: 'Token tidak ditemukan atau expired' }
-    elsif user.reset_password_sent_at < 2.hours.ago
+    elsif user.reset_password_token_sent_at < 2.hours.ago
       return { status: 422, message: 'Token sudah kadaluwarsa' }
     else
       return { status: 200, message: 'Token aktif'}

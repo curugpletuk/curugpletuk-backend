@@ -21,6 +21,7 @@ Rails.application.routes.draw do
   put '/users/update_password', to: 'users#update_password'
   put '/users/remove_avatar', to: 'users#remove_avatar'
   post '/users/email_verification', to: 'users#email_verification'
+  get '/users', to: 'users#index'
   
   #Forgot Password Routes
   post '/forgot_password', to: 'password_resets#create', as: 'forgot_password'

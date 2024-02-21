@@ -17,7 +17,8 @@ module CurugPletuk
     config.autoload_lib(ignore: %w(assets tasks))
 
     # Configuration for the application, engines, and railties goes here.
-    config.time_zone = "Jakarta"
+    # config.time_zone = 'Jakarta'
+    config.time_zone = 'Asia/Jakarta'
 
     # config/application.rb or config/initializers/carrierwave.rb
     require 'carrierwave/orm/activerecord'
@@ -31,6 +32,10 @@ module CurugPletuk
     # Only loads a smaller set of middleware suitable for API only apps.
     # Middleware like session, flash, cookies can be added back manually.
     # Skip views, helpers and assets when generating a new resource.
+    
+    # Autoload path for helpers
+    config.autoload_paths += %W(#{config.root}/app/helpers)
+
     config.api_only = true
     config.middleware.use ActionDispatch::Cookies
     config.middleware.use ActionDispatch::Flash
