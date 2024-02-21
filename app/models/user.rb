@@ -3,13 +3,14 @@ class User < ApplicationRecord
   attr_accessor :skip_password_validation
 
   after_create :create_avatar
+  # mount_uploader :image, ImageUploader
 
   VALID_PASSWORD_REGEX = /\A(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[\W_]).{8,}\z/
 
   has_secure_password validations: false
   
   has_one :avatar, as: :imageable, class_name: 'Image', dependent: :destroy
-  
+
 
   validates :name, presence: { message: "Nama harus diisi"}
   validates :name, length: { maximum: 50,  message: "Nama tidak boleh lebih dari 50 karakter"}
@@ -60,6 +61,16 @@ class User < ApplicationRecord
       id: self.id, 
       name: self.name, 
       email: self.email,
+    }
+  end
+
+  def profile_attributes
+    {
+      id: self.id, 
+      name: self.name, 
+      email: self.email,
+      bio: self.bio,
+      avatar: self.avatar&.new_attribute
     }
   end
 
@@ -193,10 +204,10 @@ class User < ApplicationRecord
     self.build_avatar.save
   end
   
-  def update_total_points
-    transaction = Transaction.find_by(user_id: self.id)
-    transaction&.calculate_total_points if transaction
-  end   
+  # def update_total_points
+  #   transaction = Transaction.find_by(user_id: self.id)
+  #   transaction&.calculate_total_points if transaction
+  # end   
 
   def delete_profile
     Image.update(image: "hey", imageable_id: self.imageable_id, imageable_type: self.imageable_type)

@@ -18,7 +18,10 @@ module CurugPletuk
 
     # Configuration for the application, engines, and railties goes here.
     config.time_zone = "Jakarta"
-    
+
+    # config/application.rb or config/initializers/carrierwave.rb
+    require 'carrierwave/orm/activerecord'
+
     # These settings can be overridden in specific environments using the files
     # in config/environments, which are processed later.
     #
