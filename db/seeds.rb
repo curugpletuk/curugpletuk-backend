@@ -7,3 +7,8 @@
 #   ["Action", "Comedy", "Drama", "Horror"].each do |genre_name|
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
+
+basic = Product.create(package_name: "Basic Package", price: 200000)
+addon_camp = Product.create(package_name: "Add On Camp Package", price: 350000)
+overnight = Product.create(package_name: "Overnight Package", price: 50000)
+river_tracking = Product.create(package_name: "River Tracking Package", price: 60000)
