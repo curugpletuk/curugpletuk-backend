@@ -9,6 +9,7 @@ class User < ApplicationRecord
 
   has_secure_password validations: false
   
+  belongs_to :role
   has_one :avatar, as: :imageable, class_name: 'Image', dependent: :destroy
   has_many :notifications, dependent: :delete_all
 

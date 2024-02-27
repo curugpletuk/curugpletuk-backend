@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_27_041545) do
+ActiveRecord::Schema[7.1].define(version: 2024_02_27_045605) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -40,6 +40,12 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_27_041545) do
     t.datetime "updated_at", null: false
   end
 
+  create_table "roles", force: :cascade do |t|
+    t.string "role_name"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
   create_table "sessions", force: :cascade do |t|
     t.string "token"
     t.string "device"
@@ -64,8 +70,11 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_27_041545) do
     t.string "reset_password_token_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "role_id"
+    t.index ["role_id"], name: "index_users_on_role_id"
   end
 
   add_foreign_key "notifications", "users"
   add_foreign_key "sessions", "users"
+  add_foreign_key "users", "roles"
 end
