@@ -3,7 +3,8 @@ class UsersController < ApplicationController
   before_action :user_valid?, only: [:create]
   
   def index
-    @users = User.all
+    # @users = User.all
+    @users = User.select("id, email, role_id")
     render json: { status: 200, data: @users.map {|user| user.new_attributes} }, status: 200
   end
 
