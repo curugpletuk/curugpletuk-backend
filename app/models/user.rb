@@ -33,13 +33,13 @@ class User < ApplicationRecord
 
   def generate_password_reset_token
     self.reset_password_token = SecureRandom.urlsafe_base64
-    self.reset_password_sent_at = Time.zone.now
+    self.reset_password_token_sent_at = Time.zone.now
     save(validate: false)
   end
 
   def reset_password_token_used
     self.reset_password_token = nil
-    self.reset_password_sent_at = nil
+    self.reset_password_token_sent_at = nil
     save
   end
 
@@ -139,7 +139,7 @@ class User < ApplicationRecord
   end
 
   def self.register_params(params)
-    params.permit(:name, :email, :password)
+    params.permit(:name, :email, :password, :role_id)
   end
 
   def self.verify_account params
@@ -260,7 +260,7 @@ class User < ApplicationRecord
 
   def self.reset_password(reset_password_token, password_params)
     user = User.find_by(reset_password_token: reset_password_token)
-    if user && user.reset_password_sent_at >= 2.hours.ago
+    if user && user.reset_password_token_sent_at >= 2.hours.ago
       if user.update(password_params)
         user.reset_password_token_used
         return { code: 200, status: "OK", message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
