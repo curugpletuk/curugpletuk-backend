@@ -10,6 +10,7 @@ class User < ApplicationRecord
   has_secure_password validations: false
   
   has_one :avatar, as: :imageable, class_name: 'Image', dependent: :destroy
+  has_many :notifications, dependent: :delete_all
 
 
   validates :name, presence: { message: "Nama harus diisi"}
