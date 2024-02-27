@@ -129,10 +129,10 @@ class User < ApplicationRecord
     user = User.new(register_params(params))
     if user.save
       user.send_registration_email
-      return { status: 201, message: 'Anda telah berhasil mendaftar! Harap konfirmasi alamat email Anda dengan memeriksa kotak masuk Anda.', data: user }
+      return { code: 201, status: "CREATED", message: 'Anda telah berhasil mendaftar! Harap konfirmasi alamat email Anda dengan memeriksa kotak masuk Anda.', data: user }
     else
       error_messages = user.errors.messages.transform_values { |v| v.first }
-      return { status: 422, message: error_messages }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
     end
   end
 
@@ -141,62 +141,64 @@ class User < ApplicationRecord
   end
 
   def self.verify_account params
-    return { status: 404, message: "Token tidak ditemukan" } if params['token_verification'].blank?
+    return { code: 404, status: "NOT FOUND", message: "Token tidak ditemukan" } if params['token_verification'].blank?
     
     user = User.find_by(confirm_token: params['token_verification'])
-    return { status: 422, message: 'Token invalid, mohon lakukan pengiriman ulang' } if user.blank?
-    return { status: 422, message: 'Token verifikasi telah kadaluarsa' } if user.confirm_token_sent_at + 5.days < Time.now
-    return { status: 422, message: 'Email telah diverifikasi sebelumnya!' } if user.email_confirmed?
-    return { status: 200, message: 'Verifikasi Sukses, Silahkan Login' } if user.update_attribute(:email_confirmed, true)
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token invalid, mohon lakukan pengiriman ulang' } if user.blank?
+
+    # confirm_token_sent_at = Time.zone.parse(user.confirm_token_sent_at)
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email telah diverifikasi sebelumnya!' } if user.email_confirmed?
+    return { code: 200, status: "OK", message: 'Verifikasi Sukses, Silahkan Login' } if user.update_attribute(:email_confirmed, true)
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token verifikasi telah kadaluarsa' } if user.confirm_token_sent_at + 5.days < Time.now
   end
 
   def self.resend_token_register params
     @user = User.find_by(email: params[:email])
-    return { status: 422, message: 'Email harus diisi' } if params[:email].blank?
-    return { status: 422, message: 'Email tidak sesuai format' } unless params[:email].match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
-    return { status: 404, message: 'Akun tidak terdaftar' } if @user.nil?
-    return { status: 422, message: 'Email sudah terverifikasi.', data: @user.profile_attributes } if @user.email_confirmed?
-    return { status: 201, message: 'Token verifikasi baru telah dikirim ke email Anda. Silakan cek email Anda dan verifikasi akun Anda.', data: @user } if @user.resend_confirmation_email
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email harus diisi' } if params[:email].blank?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email tidak sesuai format' } unless params[:email].match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
+    return { code: 404, status: "NOT FOUND", message: 'Akun tidak terdaftar' } if @user.nil?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email sudah terverifikasi.', data: @user.profile_attributes } if @user.email_confirmed?
+    return { code: 201, status: "CREATED", message: 'Token verifikasi baru telah dikirim ke email Anda. Silakan cek email Anda dan verifikasi akun Anda.', data: @user } if @user.resend_confirmation_email
   end
 
   def update_profile(profile_params, avatar_params)
     # skip_password_validation = true
     if update(profile_params) && avatar.update(avatar_params)
       avatar.user_email = email
-      return { status: 200, message: 'Profil berhasil diperbarui', data: profile_attributes }
+      return { code: 200, status: "OK", message: 'Profil berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
-      return { status: 422, message: error_messages }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
     end
   end
 
   def remove_avatar
     if avatar.update(image: nil)
       avatar.user_email = email
-      return { status: 200, message: 'Profil berhasil diperbarui', data: profile_attributes }
+      return { code: 200, status: "OK", message: 'Profil berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
-      return { status: 422, message: error_messages }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
     end
   end
 
   def update_password(params)
     skip_password_validation = false
     if Session.find_by(user_id: self.id).nil?
-      return { status: 401, message: 'Token anda tidak valid' }
+      return { code: 401, status: "UNAUTHORIZED", message: 'Token anda tidak valid' }
     end
 
-    return { status: 422, message: 'Password lama harus diisi' } if params[:current_password].blank?
-    return { status: 422, message: 'Password baru harus diisi' } if params[:password].blank?
-    return { status: 422, message: 'Password lama Anda salah' } unless password_match?(params[:current_password])
-    return { status: 422, message: 'Password baru tidak boleh sama dengan password lama' } if params[:current_password] == params[:password]
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password lama harus diisi' } if params[:current_password].blank?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password baru harus diisi' } if params[:password].blank?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password lama Anda salah' } unless password_match?(params[:current_password])
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password baru tidak boleh sama dengan password lama' } if params[:current_password] == params[:password]
 
     if password_match?(params[:current_password]) && update(params.except(:current_password, :name, :email, :bio))
       Session.find_by(user_id: self.id).destroy
-      return { status: 200, message: 'Password berhasil diperbarui', data: profile_attributes }
+      return { code: 200, status: "OK", message: 'Password berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
-      return { status: 422, message: error_messages }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
     end
   end
 
@@ -216,9 +218,9 @@ class User < ApplicationRecord
   def self.validate_user(email)
     user = find_by(email: email)
     if user&.email_confirmed?
-      return { status: 422, message: 'Email telah digunakan oleh pengguna lain!' }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email telah digunakan oleh pengguna lain!' }
     elsif user&.email_unconfirmed?
-      return { status: 422, message: 'Email sudah terdaftar dan belum terverifikasi, silakan cek email Anda' }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email sudah terdaftar dan belum terverifikasi, silakan cek email Anda' }
     else
       true
     end
@@ -228,18 +230,18 @@ class User < ApplicationRecord
     if current_user
       Session.where(user_id: current_user.id).delete_all
       self.destroy
-      return { status: 200, message: 'Data pengguna berhasil dihapus' }
+      return { code: 200, status: "OK", message: 'Data pengguna berhasil dihapus' }
     else
-      return { status: 422, message: 'Gagal menghapus data pengguna' }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Gagal menghapus data pengguna' }
     end
   end
   
   def self.password_reset_params params
     @user = User.find_by(email: params[:email])
-    return { status: 422, message: 'Email harus diisi' } if params[:email].blank?
-    return { status: 422, message: 'Email tidak sesuai format' } unless params[:email].match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
-    return { status: 404, message: 'Akun tidak terdaftar' } if @user.nil?
-    return { status: 422, message: 'Email belum terverifikasi.'} unless @user.email_confirmed?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email harus diisi' } if params[:email].blank?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email tidak sesuai format' } unless params[:email].match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
+    return { code: 404, status: "NOT FOUND", message: 'Akun tidak terdaftar' } if @user.nil?
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email belum terverifikasi.'} unless @user.email_confirmed?
     return true if @user.email_confirmed?
   end
 
@@ -248,9 +250,9 @@ class User < ApplicationRecord
     if user
       user.generate_password_reset_token
       ForgotPasswordMailer.password_reset(user).deliver_now
-      return { status: 200, message: 'Email reset password telah dikirim.', data: user }
+      return { code: 200, status: "OK", message: 'Email reset password telah dikirim.', data: user }
     else
-      return { status: 500, message: 'Terjadi kesalahan dalam mengirim email' }
+      return { code: 500, status: "INTERNAL SERVER ERROR", message: 'Terjadi kesalahan dalam mengirim email' }
     end
   end
 
@@ -259,12 +261,12 @@ class User < ApplicationRecord
     if user && user.reset_password_sent_at >= 2.hours.ago
       if user.update(password_params)
         user.reset_password_token_used
-        return { status: 200, message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
+        return { code: 200, status: "OK", message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
       else
-        return { status: 422, message: 'Gagal memperbarui password.', data: user.errors }
+        return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Gagal memperbarui password.', data: user.errors }
       end
     else
-      return { status: 404, message: 'Token tidak sesuai atau sudah kadaluwarsa.' }
+      return { code: 404, status: "NOT FOUND", message: 'Token tidak sesuai atau sudah kadaluwarsa.' }
     end
   end
 
@@ -272,11 +274,11 @@ class User < ApplicationRecord
     user = User.find_by(reset_password_token: token)
 
     if user.nil? || user.reset_password_sent_at.nil?
-      return { status: 404, message: 'Token tidak ditemukan atau expired' }
+      return { code: 404, status: "NOT FOUND", message: 'Token tidak ditemukan atau expired' }
     elsif user.reset_password_sent_at < 2.hours.ago
-      return { status: 422, message: 'Token sudah kadaluwarsa' }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token sudah kadaluwarsa' }
     else
-      return { status: 200, message: 'Token aktif'}
+      return { code: 200, status: "OK", message: 'Token aktif'}
     end
   end
 

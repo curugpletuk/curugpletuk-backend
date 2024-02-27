@@ -27,5 +27,6 @@ Rails.application.routes.draw do
   get '/check_reset_token', to: 'password_resets#check_reset_token', as: 'check_reset_token'
   patch '/update_password/:id', to: 'password_resets#update', as: 'update_password'
   
+  resources :products
   
 end

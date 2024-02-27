@@ -49,24 +49,35 @@ require 'dotenv/load'
 
   def default_response(options={})
     return render json: {
+      code: options[:code],
       status: options[:status],
       message: options[:message],
       data: options[:data]
-    }, status: options[:status]
+    }, status: options[:code]
   end
 
   def default_response2(options={})
     return render json: {
+      code: options[:code],
       status: options[:status],
       message: options[:message]
-    }, status: options[:status]
+    }, status: options[:code]
   end
 
   def default_response3(options = {})
     return render json: {
+      code: options.fetch(:code),
       status: options.fetch(:status),
       message: options.fetch(:message),
       data: options.fetch(:data)
-    }, status: options.fetch(:status)
+    }, status: options.fetch(:code)
+  end
+
+  def default_response4(options={})
+    return render json: {
+      code: options[:code],
+      status: options[:status],
+      data: options[:data]
+    }, status: options[:code]
   end
 end

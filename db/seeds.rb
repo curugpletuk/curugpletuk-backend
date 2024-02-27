@@ -8,7 +8,12 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-basic = Product.create(package_name: "Basic Package", price: 200000)
-addon_camp = Product.create(package_name: "Add On Camp Package", price: 350000)
-overnight = Product.create(package_name: "Overnight Package", price: 50000)
-river_tracking = Product.create(package_name: "River Tracking Package", price: 60000)
+basic = Product.create(package_name: "Basic Package", price: 1000, product_type: 0)
+addon_camp = Product.create(package_name: "Add On Camp Package", price: 1000, product_type: 1)
+overnight = Product.create(package_name: "Overnight Package", price: 1000, product_type: 2)
+river_tracking = Product.create(package_name: "River Tracking Package", price: 1000, product_type: 3)
+
+# basic = Product.create(package_name: "Basic Package", price: 200000, product_type: 0)
+# addon_camp = Product.create(package_name: "Add On Camp Package", price: 350000, product_type: 1)
+# overnight = Product.create(package_name: "Overnight Package", price: 50000, product_type: 2)
+# river_tracking = Product.create(package_name: "River Tracking Package", price: 60000, product_type: 3)
