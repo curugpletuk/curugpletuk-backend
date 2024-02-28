@@ -46,6 +46,7 @@ gem 'figaro'
 gem 'dotenv-rails'
 gem 'carrierwave'
 gem 'pry'
+gem 'veritrans'
 
 group :development, :test do
   # See https://guides.rubyonrails.org/debugging_rails_applications.html#debugging-with-the-debug-gem

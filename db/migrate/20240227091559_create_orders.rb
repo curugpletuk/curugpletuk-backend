@@ -4,6 +4,8 @@ class CreateOrders < ActiveRecord::Migration[7.1]
       t.integer :amount
       t.integer :order_status
       t.string :order_token
+      t.datetime :set_date
+      t.string :transaction_id
       t.references :user, null: false, foreign_key: true
       t.references :product, null: false, foreign_key: true
       

@@ -36,6 +36,8 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_27_091559) do
     t.integer "amount"
     t.integer "order_status"
     t.string "order_token"
+    t.datetime "set_date"
+    t.string "transaction_id"
     t.bigint "user_id", null: false
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
@@ -82,6 +84,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_27_091559) do
     t.string "reset_password_token_sent_at"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.string "phone_number"
     t.bigint "role_id"
     t.index ["role_id"], name: "index_users_on_role_id"
   end

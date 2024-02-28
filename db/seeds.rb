@@ -8,7 +8,7 @@
 #     MovieGenre.find_or_create_by!(name: genre_name)
 #   end
 
-arr_role = [{ role_name: "Customer" }, { role_name: "Admin" }]
+arr_role = [{ role_name: "Admin" }, { role_name: "Customer" }]
 Role.create!(arr_role)
 
 basic = Product.create(package_name: "Basic Package", price: 1000, product_type: 0)
