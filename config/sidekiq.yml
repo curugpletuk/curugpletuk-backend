@@ -9,6 +9,9 @@
   :listened_queues:
     - default
   :schedule:
+    order_worker:
+      cron: '0 * * * * *'   # Runs once per minute
+      class: OrderWorker  
     session_worker:
       cron: '0 * * * * *'
       class: SessionWorker

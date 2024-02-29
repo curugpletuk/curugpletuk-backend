@@ -18,8 +18,8 @@ class Order < ApplicationRecord
   validates :set_date, presence: :true
   
 
-  def self.notification_checking(order_id)
-    @notification = Midtrans.status(order_id)
+  def self.notification_checking(transaction_id)
+    @notification = Midtrans.status(transaction_id)
     order_id = @notification.data[:order_id]
     @order = find_by_id(order_id)
     @user = User.find_by_id(@order.user_id)

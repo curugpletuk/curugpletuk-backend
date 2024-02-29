@@ -1,10 +1,10 @@
 class OrdersController < ApplicationController
   
-  
+
   def create
     @order = Order.create(orders_params.merge(id: "ORDER-" + Time.now.to_i.to_s , order_status: 0, user_id: @user.id))
     if @order.valid?
-      result = { order: @order, redirect_url: MIDTRANS_BASE_URL + @order.token }
+      result = { order: @order, redirect_url: MIDTRANS_BASE_URL + @order.order_token }
       OrderMailer.confirm_order(@order, @user, result).deliver_now
       render json: { code: 201, status: "CREATED", message: "Pesanan berhasil dibuat, silakan lakukan pembayaran!", data: result }
     else
@@ -24,15 +24,15 @@ class OrdersController < ApplicationController
   
   def notification_handler
     @data = JSON.parse(request.body.read)
-    data = Order.notification_checking(@data['transaction_id'])
-    return render json: { status: "OK" }, status: :ok
+    Order.notification_checking(@data['transaction_id'])
+    render json: { status: "OK" }, status: :ok
   end
 
   def cancel 
-    @response = Order.cancel_request(params[:order_id])
-    hash_response = @response["status_code"] == "200" ? { code: 200, status: "OK", message: "Pesanan berhasil dibatalkan" } :
-                                                        { code: 400, status: "BAD_REQUEST", message: "Pesanan tidak dapat dibatalkan atau sudah dibatalkan!" }
-    default_response(hash_response)
+    response = Order.cancel_request(params[:order_id])
+    hash_response = response["status_code"] == "200" ? { code: 200, status: "OK", message: "Pesanan berhasil dibatalkan" } :
+                                                      { code: 400, status: "BAD_REQUEST", message: "Pesanan tidak dapat dibatalkan atau sudah dibatalkan!" }
+    render json: hash_response
   end
 
   private
@@ -57,21 +57,4 @@ class OrdersController < ApplicationController
     return default_response(res[:error]) if res[:error].presence
   end
 
-  # def payment_check
-  #   if @order.order_status != "paid" && @order.event_type == "event"
-  #     default_response({ code: 400, status: "BAD_REQUEST", message: "You can't do attendance" })
-  #   end
-  #   if @order.presence_status == true
-  #     default_response({ code: 400, status: "BAD_REQUEST", message: "You have made a presence" })
-  #   end
-  # end
-
-    # def set_event
-  #   @event = Event.set_event_order(params)
-  #   return default_response({ code: 404, status: "NOT_FOUND", message: "Event tidak ditemukan!"}) if @event.blank? 
-  #   order_success = @event.orders.where("order_status = 1").count
-  #   if @event.event_type == "event" && order_success >= @event.event_quota.to_i
-  #     return default_response({ code: 400, status: "BAD_REQUEST", message: "Event ini telah mencapai kuota maksimum" }) 
-  #   end
-  # end
 end
