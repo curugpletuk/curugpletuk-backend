@@ -28,15 +28,18 @@ Rails.application.routes.draw do
   post '/forgot_password', to: 'password_resets#create', as: 'forgot_password'
   get '/check_reset_token', to: 'password_resets#check_reset_token', as: 'check_reset_token'
   patch '/update_password/:id', to: 'password_resets#update', as: 'update_password'
-  
+
   #Order
   resources :orders, only: [:create, :index, :show]
   post "/orders/notification_handler", to: "orders#notification_handler"
   get "/orders/:id/cancel", to: "orders#cancel"
   # post "/orders/presence_user", to: "orders#presence_user"
 
+  resources :users
   resources :products
   resources :roles
+  resources :images
+  resources :sessions
   # resources :orders
   
 end

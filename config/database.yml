@@ -21,6 +21,8 @@ default: &default
 
 development:
   <<: *default
+  adapter: postgresql
+  encoding: unicode
   database: curug_pletuk_development
 
   # The specified database role being used to connect to PostgreSQL.
@@ -79,6 +81,8 @@ test:
 #
 production:
   <<: *default
+  adapter: postgresql
+  encoding: unicode
   database: curug_pletuk_production
   username: curug_pletuk
   password: <%= ENV["CURUG_PLETUK_DATABASE_PASSWORD"] %>

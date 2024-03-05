@@ -27,12 +27,12 @@ RailsAdmin.config do |config|
   #   field :id, :name, :created_at, :updated_at
   # end
 
-  config.authenticate_with do
-    authenticate_or_request_with_http_basic('Login is required') do |email, password|
-      @user = User.find_by_email(email)
-      @user.authenticate(password) && @user.role_id == 1 if @user
-    end
-  end
+  # config.authenticate_with do
+  #   authenticate_or_request_with_http_basic('Login is required') do |email, password|
+  #     @user = User.find_by_email(email)
+  #     @user.authenticate(password) && @user.role_id == 1 if @user
+  #   end
+  # end
 
   config.actions do
     dashboard                     # mandatory
