@@ -33,6 +33,12 @@ require 'dotenv/load'
     render json: { errors: ['Forbidden'] }, status: :forbidden
   end
 
+  def authorize_admin 
+    if @user.role_id != 3
+      default_response({ code: 401, status: "UNAUTHORIZED", message: "You don't have access to this resource!"})
+    end
+  end
+
   private
 
   def http_token

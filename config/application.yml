@@ -1,1 +1,4 @@
 SECRET_KEY : 'randomnumbercp'
+URL_HOST : 'https://curugpletuk.fly.dev'
+REDIS_URL : ''
+PASSWORD_DB : ''

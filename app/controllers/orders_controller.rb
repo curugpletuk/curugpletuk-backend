@@ -1,6 +1,10 @@
 class OrdersController < ApplicationController
+  before_action :authenticate_request!
+  before_action :set_order, only: %i[ show cancel ]
+  before_action :check_transaction, only: %i[ cancel ]
   
-
+  MIDTRANS_BASE_URL = 'https://app.sandbox.midtrans.com/snap/v3/redirection/'
+  
   def create
     @order = Order.create(orders_params.merge(id: "ORDER-" + Time.now.to_i.to_s , order_status: 0, user_id: @user.id))
     if @order.valid?
@@ -52,9 +56,9 @@ class OrdersController < ApplicationController
     end
   end
 
-  def create_params_checking
-    res = Order.create_params_checking(params)
-    return default_response(res[:error]) if res[:error].presence
-  end
+  # def create_params_checking
+  #   res = Order.create_params_checking(params)
+  #   return default_response(res[:error]) if res[:error].presence
+  # end
 
 end

@@ -1,10 +1,13 @@
 require 'veritrans'
 require 'base64'
 
-Midtrans.config.server_key = Rails.application.credentials.midtrans_sandbox.server_key
-Midtrans.config.client_key = Rails.application.credentials.midtrans_sandbox.client_key
-Midtrans.config.api_host = Rails.application.credentials.midtrans_sandbox.api_host
+# Midtrans.config.server_key = Rails.application.credentials.midtrans_sandbox.server_key
+# Midtrans.config.client_key = Rails.application.credentials.midtrans_sandbox.client_key
+# Midtrans.config.api_host = Rails.application.credentials.midtrans_sandbox.api_host
 
+Midtrans.config.server_key = "SB-Mid-server-_gAWPBITvZu8hYvc7F5_97tX"
+Midtrans.config.client_key = "SB-Mid-client-wEL9HIkE-TZO7kUe"
+Midtrans.config.api_host = "https://api.sandbox.midtrans.com"
 
 class Order < ApplicationRecord
 
@@ -87,7 +90,7 @@ class Order < ApplicationRecord
       enabled_payments: [
         "bca_klikbca", "bca_klikpay", "bri_epay", "echannel", 
         "permata_va", "bca_va", "bni_va", "bri_va", "other_va", 
-        "gopay", "indomaret", "danamon_online", "shopeepay"]
+        "gopay", "indomaret", "danamon_online", "shopeepay", "qris"]
     )
   end
 
@@ -121,23 +124,23 @@ class Order < ApplicationRecord
     return Order.find_by_id(order_id)
   end
 
-  def self.create_params_checking params={} 
-    product_types = ["product", "point"]
-    res = {}
-    if !product_types.include?(params[:product_type])
-      res[:error] = { code: 400, status: "BAD_REQUEST", message: "Jenis product tidak ditemukan!" }
-    end
-    if params[:product_type] == "product" && params[:amount].to_i > 1
-      res[:error] = { code: 400, status: "BAD_REQUEST", message: "Kamu hanya bisa membeli satu product!"}
-    end
-    if params[:amount].to_i <= 0
-      res[:error] = { code: 400, status: "BAD_REQUEST", message: "Jumlah harus lebih besar dari 0"}
-    end
-    if params[:product_type] == "point" && params[:amount].to_i < 10 
-      res[:error] = { code: 400, status: "BAD_REQUEST", message: "Jumlah pembelian minimum adalah 10 poin"}
-    end
-    return res
-  end
+  # def self.create_params_checking params={} 
+  #   product_types = ["product", "point"]
+  #   res = {}
+  #   if !product_types.include?(params[:product_type])
+  #     res[:error] = { code: 400, status: "BAD_REQUEST", message: "Jenis product tidak ditemukan!" }
+  #   end
+  #   if params[:product_type] == "product" && params[:amount].to_i > 1
+  #     res[:error] = { code: 400, status: "BAD_REQUEST", message: "Kamu hanya bisa membeli satu product!"}
+  #   end
+  #   if params[:amount].to_i <= 0
+  #     res[:error] = { code: 400, status: "BAD_REQUEST", message: "Jumlah harus lebih besar dari 0"}
+  #   end
+  #   if params[:product_type] == "point" && params[:amount].to_i < 10 
+  #     res[:error] = { code: 400, status: "BAD_REQUEST", message: "Jumlah pembelian minimum adalah 10 poin"}
+  #   end
+  #   return res
+  # end
 
   def order_new_attribute 
     @product = Product.find(self.product_id)
@@ -146,7 +149,7 @@ class Order < ApplicationRecord
       product_type: @product.product_type,
       amount: self.amount,
       user_id: self.user_id,
-      product_id: self.product_id,
+      set_date: self.set_date,
       order_status: self.order_status,
       created_at: self.created_at,
       updated_at: self.updated_at,
@@ -159,7 +162,7 @@ class Order < ApplicationRecord
 
   def send_notification
     Notification.create({
-      subtext: self.product_type == "product" ? "Order product" : "Order Point",
+      subtext: @product.package_name,
       title: "Pesanan berhasil dibuat",
       description: "Berhasil membuat pesanan dengan nomor id #{self.id} Silahkan lakukan pembayaran sesuai dengan nominal yang diminta",
       user_id: self.user_id
@@ -168,7 +171,7 @@ class Order < ApplicationRecord
 
   def self.send_notification_order(order, status)
     @message = {}
-    @message[:subtext] = order.product_type == "product" ? "Order product" : "Order Point"
+    @message[:subtext] = @product.package_name
     %w(settlement expire cancel).each do |s|
       if status == s
         self.title_process(s)

@@ -6,7 +6,7 @@ class SessionWorker
 	def perform
 		puts "Deleting Expired Session"
 		Session.all.each do |session|
-			if Time.now > (session.created_at + 360.minutes)
+			if Time.now > (session.created_at + 2.minutes)
 				session.delete
 			end
 		end
