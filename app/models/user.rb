@@ -5,8 +5,8 @@ class User < ApplicationRecord
   after_create :create_avatar
   # mount_uploader :image, ImageUploader
 
-  VALID_PASSWORD_REGEX = /\A(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[\W_]).{8,}\z/
-
+  # VALID_PASSWORD_REGEX = /\A(?=.*[A-Z])(?=.*[0-9])(?=.*[a-z])(?=.*[\W_]).{8,}\z/
+  VALID_PASSWORD_REGEX = /\A(?=.*[a-zA-Z])(?=.*[\d\W_]).{8,20}\z/
   has_secure_password validations: false
   
   belongs_to :role
@@ -23,9 +23,15 @@ class User < ApplicationRecord
   validates :password, presence: { message: "Password harus di isi"}, if: -> { !skip_password_validation }
   validates :password, length: {minimum: 8, message: "Password tidak boleh kurang dari 8 karakter"}, if: -> { !skip_password_validation }
   validates :password, length: {maximum: 20, message: "Password tidak boleh lebih dari 20 karakter"}, if: -> { !skip_password_validation }
-  validates :password, format: {with: VALID_PASSWORD_REGEX, message: "Password harus berisi kombinasi huruf besar dan kecil, angka, dan karakter khusus (!$@%)"}, if: -> { !skip_password_validation }
+  validates :password, format: {with: VALID_PASSWORD_REGEX, message: "Password harus berisi kombinasi huruf besar atau kecil dan angka/karakter khusus (!$@%)"}, if: -> { !skip_password_validation }
   validates :reset_password_token, presence: true, unless: :resetting_password?
   validates :bio, length: { maximum: 50, message: "Bio tidak boleh lebih dari 50 karakter" }
+  validates :phone_number, numericality: { only_integer: true, message: "Nomor Handphone hanya boleh berisi angka"}
+  validates :phone_number, format: { with: /\A08/, message: "Nomor Handphone harus diawali dengan '08'" }
+  validates :phone_number, length: {minimum: 12, message: "Nomor Handphone tidak boleh kurang dari 12 digit"}
+  validates :phone_number, length: {maximum: 16, message: "Nomor Handphone tidak boleh lebih dari 16 digit"}
+  
+
 
   def resetting_password?
     reset_password_token.nil?
@@ -72,6 +78,7 @@ class User < ApplicationRecord
       name: self.name, 
       email: self.email,
       bio: self.bio,
+      phone_number: self.phone_number,
       avatar: self.avatar&.new_attribute
     }
   end

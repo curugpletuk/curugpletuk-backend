@@ -7,7 +7,7 @@ class Product < ApplicationRecord
   validates :package_name, presence: true
 
   def self.get_all_products
-    @products = Product.select("id, package_name, price, product_type")
-    return { code: 200, status: "OK", data: { product: @products} }
+    products = Product.select("id, package_name, price, product_type")
+    return { code: 200, status: "OK", data: { products: products} }
   end
 end

@@ -15,7 +15,7 @@ class Order < ApplicationRecord
   
   belongs_to :user
   belongs_to :product
-  $gross_amount = Product.price
+  # $gross_amount = Product.price
   enum :order_status, { pending: 0, paid: 1, unpaid: 2, canceled: 3, waiting_list: 4 }
   validates :user_id, :product_id, :amount, presence: :true
   validates :set_date, presence: :true
