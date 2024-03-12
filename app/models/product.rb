@@ -1,5 +1,5 @@
 class Product < ApplicationRecord
-  enum :product_type, { basic: 0, addon_camp: 1, overnight: 2, river_tracking: 3 }
+  enum :product_type, { basic: 0, addon_camp: 1, overnight: 2, river_tracking: 3, tourism_education: 4, robusta_coffee: 5 }
 
   has_many :orders, dependent: :delete_all
 
