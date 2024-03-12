@@ -1,21 +1,18 @@
-:schedule:
-  order_worker:
-    cron: '0 * * * * *'   # Runs once per minute
-    class: OrderWorker 
-  session_worker:
-    cron: '0 * * * *'
-    class: SessionWorker
+# :schedule:
+#   order_worker:
+#     cron: '0 * * * * *'   # Runs once per minute
+#     class: OrderWorker 
+#   session_worker:
+#     cron: '0 * * * *'
+#     class: SessionWorker
 
 
 # :concurrency: 5
-# :scheduler:
-#   :listened_queues:
-#     - default
-#   :schedule:
-#     order_worker:
-#       cron: '0 * * * * *'   # Runs once per minute
-#       class: OrderWorker  
-#     session_worker:
-#       cron: '0 * * * * *'
-#       class: SessionWorker
+:scheduler:
+  :listened_queues:
+    - default
+  :schedule:
+    session_worker:
+      cron: '0 * * * * *'
+      class: SessionWorker
       # queue: default
