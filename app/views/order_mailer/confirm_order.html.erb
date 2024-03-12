@@ -3,7 +3,7 @@
 
 <head>
     <meta content="text/html; charset=utf-8" http-equiv="Content-Type" />
-    <title>Create Order Email</title>
+    <title>Konfirmasi Pemesanan Tiket Objek Wisata Curug Pletuk</title>
     <meta name="description" content="Create Order Email Template." />
     <style type="text/css">
         a:hover {
@@ -66,7 +66,7 @@
                                         font-size: 18px;
                                         font-family: 'Rubik', sans-serif;
                                       ">
-                                        Order Received
+                                        Pemesanan Tiket Diterima
                                       </h6>
                                       <p style="
                                         color: #455056;
@@ -76,29 +76,19 @@
                                         text-align: center;
                                         margin-top: 35px;
                                       ">
-                                        Hi <%= @user.name %>,
-                                        <br>Your order has been successfully confirmed!
-                                        <br> Please make payment
+                                        Halo <%= @user.name %>,
+                                        <br>Pemesanan tiket anda telah dikonfirmasi!
                                         <br>
-                                        <br>Here are the order details:
-                                        <br>Order-ID: <%= @order.id %>
-                                        <br>Package: <%= @product.package_name %>
-                                        <br>Amount: <%= @order.amount %>
-                                        <br>Date: <%= @order.set_date %>
-                                        <br>Status: <span style="color: #c3b339;">Pending</span>
+                                        <br>Berikut adalah detail pemesanannya:
+                                        <br>ID-Pemesanan: <%= @order.id %>
+                                        <br>Paket Wisata: <%= @product.package_name %>
+                                        <br>Jumlah: <%= @order.amount %>
+                                        <br>Harga: <%= number_to_currency(@order.amount * @product.price, unit: 'Rp', precision: 0) %>
+                                        <br>Tanggal: <%= @order.set_date %>
+                                        <br>Status: <span style="color: #c3b339;">Berhasil Dipesan</span>
+                                        <br> Lakukan pembayaran pada loket objek wisata Curug Pletuk
                                       </p>
-                                      <a href="<%= @link[:redirect_url] %>"style="
-                                        background: #6E5DE7;
-                                        text-decoration: none !important;
-                                        font-weight: 500;
-                                        margin-top: 35px;
-                                        color: #fff;
-                                        text-transform: uppercase;
-                                        font-size: 14px;
-                                        padding: 10px 24px;
-                                        display: inline-block;
-                                        border-radius: 50px;
-                                      ">pay now</a>
+                                      
                                     </td>
                                 </tr>
                                 <tr>
