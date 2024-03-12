@@ -31,8 +31,11 @@ Rails.application.routes.draw do
 
   #Order
   resources :orders, only: [:create, :index, :show]
-  post "/orders/notification_handler", to: "orders#notification_handler"
-  get "/orders/:id/cancel", to: "orders#cancel"
+  post "/orders", to: "orders#create"
+  get "/orders", to: "orders#index"
+  get "/orders/:id", to: "orders#show"
+  # post "/orders/notification_handler", to: "orders#notification_handler"
+  # get "/orders/:id/cancel", to: "orders#cancel"
   # post "/orders/presence_user", to: "orders#presence_user"
 
   resources :users
@@ -40,6 +43,7 @@ Rails.application.routes.draw do
   resources :roles
   resources :images
   resources :sessions
+  resources :notifications
   # resources :orders
   
 end

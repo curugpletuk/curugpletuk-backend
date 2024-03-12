@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_02_27_091559) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_12_064148) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -32,12 +32,9 @@ ActiveRecord::Schema[7.1].define(version: 2024_02_27_091559) do
     t.index ["user_id"], name: "index_notifications_on_user_id"
   end
 
-  create_table "orders", force: :cascade do |t|
+  create_table "orders", id: :serial, force: :cascade do |t|
     t.integer "amount"
-    t.integer "order_status"
-    t.string "order_token"
     t.datetime "set_date"
-    t.string "transaction_id"
     t.bigint "user_id", null: false
     t.bigint "product_id", null: false
     t.datetime "created_at", null: false
