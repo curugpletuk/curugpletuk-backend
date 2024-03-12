@@ -12,6 +12,7 @@ class User < ApplicationRecord
   belongs_to :role
   has_one :avatar, as: :imageable, class_name: 'Image', dependent: :destroy
   has_many :notifications, dependent: :delete_all
+  has_many :orders
 
 
   validates :name, presence: { message: "Nama harus diisi"}
@@ -26,10 +27,10 @@ class User < ApplicationRecord
   validates :password, format: {with: VALID_PASSWORD_REGEX, message: "Password harus berisi kombinasi huruf besar atau kecil dan angka/karakter khusus (!$@%)"}, if: -> { !skip_password_validation }
   validates :reset_password_token, presence: true, unless: :resetting_password?
   validates :bio, length: { maximum: 50, message: "Bio tidak boleh lebih dari 50 karakter" }
-  validates :phone_number, numericality: { only_integer: true, message: "Nomor Handphone hanya boleh berisi angka"}
-  validates :phone_number, format: { with: /\A08/, message: "Nomor Handphone harus diawali dengan '08'" }
-  validates :phone_number, length: {minimum: 12, message: "Nomor Handphone tidak boleh kurang dari 12 digit"}
-  validates :phone_number, length: {maximum: 16, message: "Nomor Handphone tidak boleh lebih dari 16 digit"}
+  validates :phone_number, numericality: { only_integer: true, message: "Nomor Handphone hanya boleh berisi angka"}, allow_nil: true
+  validates :phone_number, format: { with: /\A08/, message: "Nomor Handphone harus diawali dengan '08'" }, allow_nil: true
+  validates :phone_number, length: {minimum: 12, message: "Nomor Handphone tidak boleh kurang dari 12 digit"}, allow_nil: true
+  validates :phone_number, length: {maximum: 16, message: "Nomor Handphone tidak boleh lebih dari 16 digit"}, allow_nil: true
   
 
 
