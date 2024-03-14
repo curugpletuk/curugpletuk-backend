@@ -70,6 +70,7 @@ class User < ApplicationRecord
       id: self.id, 
       name: self.name, 
       email: self.email,
+      role: self.role.role_name
     }
   end
 
