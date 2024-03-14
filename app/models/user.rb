@@ -14,7 +14,7 @@ class User < ApplicationRecord
   has_many :notifications, dependent: :delete_all
   has_many :orders
 
-
+  validates :name, presence: true
   validates :name, presence: { message: "Nama harus diisi"}
   validates :name, length: { maximum: 50,  message: "Nama tidak boleh lebih dari 50 karakter"}
   validates :name, format: { with: /\A(?!.*[0-9])(?!.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, message: "Nama tidak boleh mengandung angka dan karakter khusus" }
@@ -175,7 +175,7 @@ class User < ApplicationRecord
     # skip_password_validation = true
     if update(profile_params) && avatar.update(avatar_params)
       avatar.user_email = email
-      return { code: 200, status: "OK", message: 'Profil berhasil diperbarui', data: profile_attributes }
+      return { code: 201, status: "CREATED", message: 'Profil berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
       return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
@@ -185,7 +185,7 @@ class User < ApplicationRecord
   def remove_avatar
     if avatar.update(image: nil)
       avatar.user_email = email
-      return { code: 200, status: "OK", message: 'Profil berhasil diperbarui', data: profile_attributes }
+      return { code: 201, status: "CREATED", message: 'Profil berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
       return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
@@ -205,7 +205,7 @@ class User < ApplicationRecord
 
     if password_match?(params[:current_password]) && update(params.except(:current_password, :name, :email, :bio))
       Session.find_by(user_id: self.id).destroy
-      return { code: 200, status: "OK", message: 'Password berhasil diperbarui', data: profile_attributes }
+      return { code: 201, status: "CREATED", message: 'Password berhasil diperbarui', data: profile_attributes }
     else
       error_messages = errors.messages.transform_values { |v| v.first }
       return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
@@ -271,7 +271,7 @@ class User < ApplicationRecord
     if user && user.reset_password_token_sent_at >= 2.hours.ago
       if user.update(password_params)
         user.reset_password_token_used
-        return { code: 200, status: "OK", message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
+        return { code: 201, status: "CREATED", message: 'Password berhasil diperbarui. Silahkan melakukan login kembali.'}
       else
         return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Gagal memperbarui password.', data: user.errors }
       end
@@ -283,9 +283,9 @@ class User < ApplicationRecord
   def self.check_reset_token(token)
     user = User.find_by(reset_password_token: token)
 
-    if user.nil? || user.reset_password_sent_at.nil?
+    if user.nil? || user.reset_password_token_sent_at.nil?
       return { code: 404, status: "NOT FOUND", message: 'Token tidak ditemukan atau expired' }
-    elsif user.reset_password_sent_at < 2.hours.ago
+    elsif user.reset_password_token_sent_at < 2.hours.ago
       return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token sudah kadaluwarsa' }
     else
       return { code: 200, status: "OK", message: 'Token aktif'}

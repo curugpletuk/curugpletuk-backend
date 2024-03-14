@@ -10,4 +10,14 @@ class Product < ApplicationRecord
     products = Product.select("id, package_name, price, product_type")
     return { code: 200, status: "OK", data: { products: products} }
   end
+
+  def product_attribute 
+    @product = Product.find(self.product_id)
+    {
+      id: self.id,
+      package_name: self.package_name,
+      product_type: self.product_type,
+      price: self.price
+    }
+  end
 end

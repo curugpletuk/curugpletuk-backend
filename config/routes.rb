@@ -34,6 +34,7 @@ Rails.application.routes.draw do
   post "/orders", to: "orders#create"
   get "/orders", to: "orders#index"
   get "/orders/:id", to: "orders#show"
+  get "/orders/users", to: "orders#set_order"
   # post "/orders/notification_handler", to: "orders#notification_handler"
   # get "/orders/:id/cancel", to: "orders#cancel"
   # post "/orders/presence_user", to: "orders#presence_user"
