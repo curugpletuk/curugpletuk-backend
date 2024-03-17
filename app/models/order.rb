@@ -28,6 +28,7 @@ class Order < ApplicationRecord
       product_type: @product.product_type,
       amount: self.amount,
       user_id: self.user_id,
+      name: user.name,
       set_date: self.set_date,
       created_at: self.created_at,
       updated_at: self.updated_at,
@@ -49,8 +50,6 @@ class Order < ApplicationRecord
   def self.show_all_user_orders(user)
     return [] unless user.present?
 
-    user.orders.order(created_at: :desc).map do |order|
-      order.order_new_attribute
-    end
+    user.orders.order(created_at: :desc).map(&:order_new_attributes)
   end
 end

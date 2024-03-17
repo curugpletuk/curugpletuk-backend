@@ -34,7 +34,7 @@ require 'dotenv/load'
   end
 
   def authorize_admin 
-    if @user.role_id != 3
+    if current_user.role_id != 1
       default_response({ code: 401, status: "UNAUTHORIZED", message: "You don't have access to this resource!"})
     end
   end

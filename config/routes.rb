@@ -6,9 +6,6 @@ Rails.application.routes.draw do
   # Can be used by load balancers and uptime monitors to verify that the app is live.
   get "up" => "rails/health#show", as: :rails_health_check
 
-  # Defines the root path route ("/")
-  # root "posts#index"
-
   #Users Routes
   get '/verification-account', to: 'users#email_verification'
   post '/auth/signup', to: 'users#create'
@@ -30,14 +27,11 @@ Rails.application.routes.draw do
   patch '/update_password/:id', to: 'password_resets#update', as: 'update_password'
 
   #Order
-  resources :orders, only: [:create, :index, :show]
   post "/orders", to: "orders#create"
   get "/orders", to: "orders#index"
   get "/orders/:id", to: "orders#show"
-  get "/orders/users", to: "orders#set_order"
-  # post "/orders/notification_handler", to: "orders#notification_handler"
-  # get "/orders/:id/cancel", to: "orders#cancel"
-  # post "/orders/presence_user", to: "orders#presence_user"
+  # Get All Order for User
+  get '/check_user_order', to: 'orders#check_user_order'
 
   resources :users
   resources :products
@@ -45,6 +39,6 @@ Rails.application.routes.draw do
   resources :images
   resources :sessions
   resources :notifications
-  # resources :orders
+  
   
 end
