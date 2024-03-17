@@ -26,7 +26,7 @@ class User < ApplicationRecord
   validates :password, length: {maximum: 20, message: "Password tidak boleh lebih dari 20 karakter"}, if: -> { !skip_password_validation }
   validates :password, format: {with: VALID_PASSWORD_REGEX, message: "Password harus berisi kombinasi huruf besar atau kecil dan angka/karakter khusus (!$@%)"}, if: -> { !skip_password_validation }
   validates :reset_password_token, presence: true, unless: :resetting_password?
-  validates :bio, length: { maximum: 50, message: "Bio tidak boleh lebih dari 50 karakter" }
+  validates :address, length: { maximum: 50, message: "Alamat tidak boleh lebih dari 50 karakter" }
   validates :phone_number, numericality: { only_integer: true, message: "Nomor Handphone hanya boleh berisi angka"}, allow_nil: true
   validates :phone_number, format: { with: /\A08/, message: "Nomor Handphone harus diawali dengan '08'" }, allow_nil: true
   validates :phone_number, length: {minimum: 12, message: "Nomor Handphone tidak boleh kurang dari 12 digit"}, allow_nil: true
@@ -79,7 +79,7 @@ class User < ApplicationRecord
       id: self.id, 
       name: self.name, 
       email: self.email,
-      bio: self.bio,
+      address: self.address,
       phone_number: self.phone_number,
       avatar: self.avatar&.new_attribute
     }
@@ -204,7 +204,7 @@ class User < ApplicationRecord
     return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password lama Anda salah' } unless password_match?(params[:current_password])
     return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password baru tidak boleh sama dengan password lama' } if params[:current_password] == params[:password]
 
-    if password_match?(params[:current_password]) && update(params.except(:current_password, :name, :email, :bio))
+    if password_match?(params[:current_password]) && update(params.except(:current_password, :name, :email, :address))
       Session.find_by(user_id: self.id).destroy
       return { code: 201, status: "CREATED", message: 'Password berhasil diperbarui', data: profile_attributes }
     else

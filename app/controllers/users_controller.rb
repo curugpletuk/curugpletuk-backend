@@ -54,7 +54,7 @@ class UsersController < ApplicationController
 
   private
   def user_params
-    params.permit(:name, :email, :password, :current_password, :bio)
+    params.permit(:name, :email, :password, :current_password, :address)
   end
   
   def avatar_params
@@ -62,7 +62,7 @@ class UsersController < ApplicationController
   end
 
   def profile_params
-    params.permit(:name, :bio, :phone_number)
+    params.permit(:name, :address, :phone_number)
   end
 
   def user_valid?

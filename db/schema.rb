@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.1].define(version: 2024_03_13_150952) do
+ActiveRecord::Schema[7.1].define(version: 2024_03_17_004613) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -72,7 +72,6 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_150952) do
   create_table "users", force: :cascade do |t|
     t.string "name"
     t.string "email"
-    t.string "bio"
     t.string "password_digest"
     t.boolean "email_confirmed", default: false
     t.string "confirm_token"
@@ -83,6 +82,7 @@ ActiveRecord::Schema[7.1].define(version: 2024_03_13_150952) do
     t.bigint "role_id"
     t.datetime "reset_password_token_sent_at"
     t.datetime "confirm_token_sent_at"
+    t.string "address"
     t.index ["role_id"], name: "index_users_on_role_id"
   end
 
