@@ -52,4 +52,14 @@ class Order < ApplicationRecord
 
     user.orders.order(created_at: :desc).map(&:order_new_attributes)
   end
+
+  def self.to_csv(start_date, end_date)
+    orders = where(created_at: start_date.beginning_of_month..end_date.end_of_month)
+    CSV.generate(headers: true) do |csv|
+      csv << ['Order ID', 'Product', 'Quantity', 'Total Amount'] # Header kolom CSV
+      orders.each do |order|
+        csv << [order.id, order.product_name, order.quantity, order.total_amount] # Data order
+      end
+    end
+  end
 end

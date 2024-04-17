@@ -32,6 +32,16 @@ Rails.application.routes.draw do
   get "/orders/:id", to: "orders#show"
   # Get All Order for User
   get '/check_user_order', to: 'orders#check_user_order'
+  # Get Order Chart
+  get 'orders/chart', to: 'orders#order_chart', as: 'order_chart'
+  # Get Download
+  get 'orders/download/:year/:month', to: 'orders#download', as: 'download_orders'
+
+  #Product
+  post "/products", to: "products#create"
+  put "/products/update", to: "products#update"
+  delete "/products/destroy", to: "products#destroy"
+
 
   resources :users
   resources :products
