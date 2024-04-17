@@ -13,6 +13,7 @@ class User < ApplicationRecord
   has_one :avatar, as: :imageable, class_name: 'Image', dependent: :destroy
   has_many :notifications, dependent: :delete_all
   has_many :orders
+  has_many :products, dependent: :destroy
 
   validates :name, presence: true
   validates :name, presence: { message: "Nama harus diisi"}
