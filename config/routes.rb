@@ -39,8 +39,8 @@ Rails.application.routes.draw do
 
   #Product
   post "/products", to: "products#create"
-  put "/products/update", to: "products#update"
-  delete "/products/destroy", to: "products#destroy"
+  put "/products/update/:id", to: "products#update"
+  delete "/products/destroy/:id", to: "products#destroy"
 
 
   resources :users
