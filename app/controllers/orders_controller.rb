@@ -13,7 +13,7 @@ class OrdersController < ApplicationController
 
   def check_user_order
     @orders = current_user.orders.all
-    render json: @orders.map(&:order_new_attribute), status: :ok
+    render json: { code: 200, status: "OK", data: @orders.map(&:order_new_attribute)}, status: :ok
   end
   
   def create

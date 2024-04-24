@@ -25,7 +25,6 @@ class Order < ApplicationRecord
     @product = Product.find(self.product_id)
     {
       id: self.id,
-      product_type: @product.product_type,
       amount: self.amount,
       user_id: self.user_id,
       name: user.name,
@@ -56,9 +55,9 @@ class Order < ApplicationRecord
   def self.to_csv(start_date, end_date)
     orders = where(created_at: start_date.beginning_of_month..end_date.end_of_month)
     CSV.generate(headers: true) do |csv|
-      csv << ['Order ID', 'Product', 'Quantity', 'Total Amount'] # Header kolom CSV
+      csv << ['Order ID', 'Amount'] # Header kolom CSV
       orders.each do |order|
-        csv << [order.id, order.product_name, order.quantity, order.total_amount] # Data order
+        csv << [order.id, order.amount] # Data order
       end
     end
   end
