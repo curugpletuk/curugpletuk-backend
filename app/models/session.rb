@@ -39,11 +39,16 @@ class Session < ApplicationRecord
   
   private
 
+  # def self.generate_login_token(user_id)
+  #   payload = { user_id: user_id }
+  #   expired_time = 3600 * 6
+  #   exp = Time.now.to_i + expired_time
+  #   payload[:exp] = exp
+  #   JWT.encode(payload, ENV['SECRET_KEY'], 'HS256')
+  # end
+
   def self.generate_login_token(user_id)
     payload = { user_id: user_id }
-    expired_time = 3600 * 6
-    exp = Time.now.to_i + expired_time
-    payload[:exp] = exp
     JWT.encode(payload, ENV['SECRET_KEY'], 'HS256')
   end
 

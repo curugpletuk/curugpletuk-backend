@@ -9,6 +9,9 @@ console_command = '/rails/bin/rails console'
 
 [build]
 
+[processes]
+  app = 'bin/rails server'
+
 [http_service]
   internal_port = 3000
   force_https = true
@@ -33,4 +36,5 @@ console_command = '/rails/bin/rails console'
       X-Forwarded-Proto = 'https'
 
 [[vm]]
-  size = 'shared-cpu-2x'
+  memory = '512mb'
+  size = 'shared-cpu-1x'
