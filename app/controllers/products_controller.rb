@@ -1,5 +1,6 @@
 class ProductsController < ApplicationController
   before_action :authenticate_request!, except: %i[index show]
+  before_action :authorize_admin, except: %i[index show]
 
   def index
     @products = Product.get_all_products
@@ -7,7 +8,8 @@ class ProductsController < ApplicationController
   end
 
   def show
-    render json: @products.product_attribute, status: :ok
+    product = Product.find(params[:id])
+    render json: { code: 200, status: "OK", data: product.product_attribute }, status: :ok
   end
   
   def create
