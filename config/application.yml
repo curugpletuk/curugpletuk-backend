@@ -1,4 +1,4 @@
 SECRET_KEY : 'randomnumbercp'
 URL_HOST : 'https://curugpletuk.fly.dev'
-REDIS_URL : 'redis://default:cef319d49ca1412584b4acc88d27a9b5@fly-curug-pletuk-db.upstash.io:6379'
+REDIS_URL : 'redis://default:b7f0a29f8def4fce82afe34c5aaa7838@fly-curugpletukredis.upstash.io:6379'
 PASSWORD_DB : '8hzkmZYVBjX5eZT'
