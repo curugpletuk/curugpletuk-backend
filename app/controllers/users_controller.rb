@@ -9,7 +9,7 @@ class UsersController < ApplicationController
 
   def show
     @user = User.find(params[:id])
-    render json: { status: 200, data: @user }, status: 200
+    render json: { status: 200, data: @user.profile_attributes }, status: 200
   end
 
   def show_current_user
