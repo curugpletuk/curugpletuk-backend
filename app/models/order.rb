@@ -32,7 +32,8 @@ class Order < ApplicationRecord
       created_at: self.created_at,
       updated_at: self.updated_at,
       package_name: @product.package_name,
-      total_payment: @product.price * amount
+      total_payment: @product.price * amount,
+      is_checked: self.checked_by_admin
     }
   end
 

@@ -1,5 +1,6 @@
 class OrdersController < ApplicationController
   before_action :authenticate_request!
+  before_action :authorize_admin, only: %i[checked_order]
 
   def index
     @orders = Order.all
@@ -21,6 +22,15 @@ class OrdersController < ApplicationController
     default_response(order)
   end
 
+  def checked_order
+    @order = Order.find(params[:id])
+    if @order.update(checked_by_admin: true)
+      render json: { code: 200, status: "OK", data: @order.order_new_attribute }, status: :ok
+    else
+      render json: @order.errors, status: :unprocessable_entity
+    end
+  end
+
   def order_chart
     order_data = Order.group_by_month(:created_at, format: "%b %Y").count
     render json: { code: 200, status: "OK", data: order_data }, status: :ok
@@ -38,7 +48,6 @@ class OrdersController < ApplicationController
       end
     end
   end
-
 
   private
   def order_params

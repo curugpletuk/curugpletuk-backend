@@ -36,6 +36,8 @@ Rails.application.routes.draw do
   get 'orders/chart', to: 'orders#order_chart', as: 'order_chart'
   # Get Download
   get 'orders/download/:year/:month', to: 'orders#download', as: 'download_orders'
+  # Checked by Admin
+  post '/orders/:id/check_order', to: 'orders#checked_order'
 
   #Product
   get "/products", to: "products#index"
