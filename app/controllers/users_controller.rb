@@ -1,5 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_request!, except: %i[create email_verification show resend_verification]
+  before_action :authorize_admin, only: [:index] 
   before_action :user_valid?, only: [:create]
   
   def index

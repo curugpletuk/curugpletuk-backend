@@ -1,6 +1,7 @@
 class OrdersController < ApplicationController
   before_action :authenticate_request!
-  before_action :authorize_admin, only: %i[checked_order]
+  before_action :authorize_admin, only: %i[index checked_order]
+  before_action :authorize_customer, only: %i[create]
 
   def index
     @orders = Order.all
