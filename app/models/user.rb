@@ -19,8 +19,9 @@ class User < ApplicationRecord
   validates :name, presence: { message: "Nama harus diisi"}
   validates :name, length: { maximum: 50,  message: "Nama tidak boleh lebih dari 50 karakter"}
   validates :name, format: { with: /\A(?!.*[0-9])(?!.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, message: "Nama tidak boleh mengandung angka dan karakter khusus" }
-  validates :email, presence: { message: "Email harus diisi"}, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i }, uniqueness: true
-  validates :email, presence: { message: "Email harus diisi"}, format: {with: URI::MailTo::EMAIL_REGEXP}
+  validates :email, presence: { message: "Email harus diisi"}, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, message: "Email harus sesuai format" }, uniqueness: true
+  # validates :email, presence: { message: "Email harus diisi"}, format: {with: URI::MailTo::EMAIL_REGEXP}
+  validates :email, presence: { message: "Email harus diisi" }, format: { with: URI::MailTo::EMAIL_REGEXP, message: "Email harus sesuai format" }, uniqueness: true
   validates :email, length: { maximum: 50, message: "Email tidak boleh lebih dari 50 karakter" }
   validates :password, presence: { message: "Password harus di isi"}, if: -> { !skip_password_validation }
   validates :password, length: {minimum: 8, message: "Password tidak boleh kurang dari 8 karakter"}, if: -> { !skip_password_validation }
@@ -32,8 +33,9 @@ class User < ApplicationRecord
   validates :phone_number, format: { with: /\A08/, message: "Nomor Handphone harus diawali dengan '08'" }, allow_nil: true
   validates :phone_number, length: {minimum: 12, message: "Nomor Handphone tidak boleh kurang dari 12 digit"}, allow_nil: true
   validates :phone_number, length: {maximum: 16, message: "Nomor Handphone tidak boleh lebih dari 16 digit"}, allow_nil: true
-  
-
+  # validates :role_id, presence: { message: "Role id harus diisi" }
+  # validates :role_id, inclusion: { in: [0, 1], message: "harus berupa 0 atau 1" }
+  validates :role_id, presence: { message: "Role id harus diisi" }, numericality: { only_integer: true, message: "Role id harus berupa angka" }, inclusion: { in: [0, 1], message: "Role id harus berupa 0 atau 1" }
 
   def resetting_password?
     reset_password_token.nil?

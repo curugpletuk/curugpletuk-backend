@@ -2,8 +2,10 @@ class Order < ApplicationRecord
   belongs_to :user
   belongs_to :product
   
-  validates :user_id, :product_id, :amount, presence: :true
-  validates :set_date, presence: :true
+  validates :user_id, presence: { message: "harus diisi" }
+  validates :product_id, :amount, presence: { message: "harus diisi" }, numericality: { only_integer: true, message: "harus berupa bilangan bulat" }
+  validates :set_date, presence: { message: "harus diisi" }
+  validate :set_date_format
 
   def self.create_orders(params, current_user)
     order = current_user.orders.new(params)
@@ -52,6 +54,25 @@ class Order < ApplicationRecord
 
     user.orders.order(created_at: :desc).map(&:order_new_attributes)
   end
+
+  def set_date_format
+    return if set_date.blank?
+    
+    begin
+      DateTime.strptime(set_date.to_s, '%Y-%m-%d %H:%M')
+    rescue ArgumentError
+      errors.add(:set_date, "set date tidak sesuai format")
+    end
+  end
+
+  # def set_date_format
+  #   return if set_date.blank? 
+
+  #   format = "%Y-%m-%d %H:%M"
+  #   DateTime.strptime(set_date.to_s, format)
+  # rescue ArgumentError
+  #   errors.add(:set_date, "harus sesuai format (YYYY-MM-DD HH:MM)")
+  # end
 
   def self.to_csv(start_date, end_date)
     orders = where(created_at: start_date.beginning_of_month..end_date.end_of_month)

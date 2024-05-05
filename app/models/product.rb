@@ -2,8 +2,9 @@ class Product < ApplicationRecord
   has_many :orders, dependent: :delete_all
   belongs_to :user
 
-  validates :price, presence: true
-  validates :package_name, presence: true
+  validates :package_name, presence: { message: "harus diisi" }
+  validates :price, presence: { message: "harus diisi" },
+                    numericality: { only_integer: true, message: "harus berupa bilangan bulat" }
 
   def self.get_all_products
     products = Product.select("id, package_name, price")
@@ -12,6 +13,7 @@ class Product < ApplicationRecord
 
   def self.create_product(params, current_user)
     product = current_user.products.new(params)
+  
     if product.save
     { code: 201, status: "CREATED", message: "Produk telah ditambahkan", data: product.product_attribute }
     else

@@ -47,6 +47,10 @@ require 'dotenv/load'
     end
   end
 
+  rescue_from ActionDispatch::Http::Parameters::ParseError do |e|
+    render json: { status: "error", message: "Invalid JSON format." }, status: :bad_request
+  end
+
   private
 
   def http_token
