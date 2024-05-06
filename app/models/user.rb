@@ -15,7 +15,7 @@ class User < ApplicationRecord
   has_many :orders
   has_many :products, dependent: :destroy
 
-  validates :name, presence: true
+  # validates :name, presence: true
   validates :name, presence: { message: "Nama harus diisi"}
   validates :name, length: { maximum: 50,  message: "Nama tidak boleh lebih dari 50 karakter"}
   validates :name, format: { with: /\A(?!.*[0-9])(?!.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, message: "Nama tidak boleh mengandung angka dan karakter khusus" }
@@ -35,7 +35,7 @@ class User < ApplicationRecord
   validates :phone_number, length: {maximum: 16, message: "Nomor Handphone tidak boleh lebih dari 16 digit"}, allow_nil: true
   # validates :role_id, presence: { message: "Role id harus diisi" }
   # validates :role_id, inclusion: { in: [0, 1], message: "harus berupa 0 atau 1" }
-  validates :role_id, presence: { message: "Role id harus diisi" }, numericality: { only_integer: true, message: "Role id harus berupa angka" }, inclusion: { in: [0, 1], message: "Role id harus berupa 0 atau 1" }
+  validates :role_id, presence: { message: "Role id harus diisi" }, numericality: { only_integer: true, message: "Role id harus berupa angka" }, inclusion: { in: [1, 2], message: "Role id harus berupa 1 untuk admin atau 2 untuk customer" }
 
   def resetting_password?
     reset_password_token.nil?
@@ -163,7 +163,7 @@ class User < ApplicationRecord
     # confirm_token_sent_at = Time.zone.parse(user.confirm_token_sent_at)
     return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email telah diverifikasi sebelumnya!' } if user.email_confirmed?
     return { code: 200, status: "OK", message: 'Verifikasi Sukses, Silahkan Login' } if user.update_attribute(:email_confirmed, true)
-    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token verifikasi telah kadaluarsa' } if user.confirm_token_sent_at + 5.days < Time.now
+    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token verifikasi telah kedaluwarsa' } if user.confirm_token_sent_at + 5.days < Time.now
   end
 
   def self.resend_token_register params
@@ -280,7 +280,7 @@ class User < ApplicationRecord
         return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Gagal memperbarui password.', data: user.errors }
       end
     else
-      return { code: 404, status: "NOT FOUND", message: 'Token tidak sesuai atau sudah kadaluwarsa.' }
+      return { code: 404, status: "NOT FOUND", message: 'Token tidak sesuai atau sudah kedaluwarsa.' }
     end
   end
 
@@ -290,7 +290,7 @@ class User < ApplicationRecord
     if user.nil? || user.reset_password_token_sent_at.nil?
       return { code: 404, status: "NOT FOUND", message: 'Token tidak ditemukan atau expired' }
     elsif user.reset_password_token_sent_at < 2.hours.ago
-      return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token sudah kadaluwarsa' }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Token sudah kedaluwarsa' }
     else
       return { code: 200, status: "OK", message: 'Token aktif'}
     end

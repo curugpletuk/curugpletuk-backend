@@ -12,7 +12,7 @@ class Session < ApplicationRecord
     return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email harus diisi' } if user_params[:email].blank?
     return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Password harus diisi' } if user_params[:password].blank?
     return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Email harus sesuai format' } unless user_params[:email].match?(/\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i)
-    return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Akun belum terdaftar' } if user.nil?
+    return { code: 404, status: "NOT FOUND", message: 'Akun belum terdaftar' } if user.nil?
     
     if user.email_confirmed && user.authenticate_password(user_params[:password])
       save_session(user, request)
@@ -30,7 +30,7 @@ class Session < ApplicationRecord
     end
 
     if session_data.nil?
-      return { code: 401, status: "UNAUTHORIZED", message: 'Token anda tidak valid' }
+      return { code: 404, status: "NOT FOUND", message: 'Token anda tidak valid atau kedaluwarsa' }
     else
       session_data.destroy
       return { code: 200, status: "OK", message: 'Anda telah berhasil keluar dari sesi' }
