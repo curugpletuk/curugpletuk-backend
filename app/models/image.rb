@@ -4,6 +4,8 @@ class Image < ApplicationRecord
   before_save :add_metadata_to_image
   mount_uploader :image, ImageUploader
   belongs_to :imageable, polymorphic: true
+  
+  # belongs_to :product
 
   def new_attribute
     {

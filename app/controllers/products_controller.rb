@@ -32,6 +32,40 @@ class ProductsController < ApplicationController
   private
 
   def product_params
-    params.require(:product).permit(:package_name, :price)
+    # params.permit(:package_name, :price, :description, product_image: [:image])
+    params.permit(:package_name, :price, :description)
   end
+
+
 end
+
+
+  # def create
+  #   product = current_user.products.new(product_params)
+  #   if product.save
+  #     render json: { code: 201, status: "CREATED", data: product.product_attribute }, status: :created
+  #   else
+  #     render json: { code: 422, status: "UNPROCESSABLE ENTITY", message: product.errors.full_messages }, status: :unprocessable_entity
+  #   end
+  # end
+
+  # def update
+  #   product = Product.find(params[:id])
+  #   if product.update(product_params)
+  #     render json: { code: 200, status: "OK", data: product.product_attribute }, status: :ok
+  #   else
+  #     render json: { code: 422, status: "UNPROCESSABLE ENTITY", message: product.errors.full_messages }, status: :unprocessable_entity
+  #   end
+  # end
+
+  # def product_params
+  #   params.require(:product).permit(:package_name, :price, :description)
+  # end
+
+  # def product_params
+  #   params.require(:product).permit(:package_name, :price, :description)
+  # end
+
+  # def image
+  #   params.permit(:image)
+  # end
