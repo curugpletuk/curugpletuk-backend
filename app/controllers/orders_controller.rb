@@ -9,8 +9,12 @@ class OrdersController < ApplicationController
   end
   
   def show
-    @order = Order.find(params[:id])
-    render json: { code: 200, status: "OK", data: @order.order_new_attribute }, status: :ok
+    begin
+      @order = Order.find(params[:id])
+      render json: { code: 200, status: "OK", data: @order.order_new_attribute }, status: :ok
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "Order tidak ditemukan" }, status: :not_found
+    end
   end
 
   def check_user_order
@@ -24,11 +28,15 @@ class OrdersController < ApplicationController
   end
 
   def checked_order
-    @order = Order.find(params[:id])
-    if @order.update(checked_by_admin: true)
-      render json: { code: 200, status: "OK", data: @order.order_new_attribute }, status: :ok
-    else
-      render json: @order.errors, status: :unprocessable_entity
+    begin
+      @order = Order.find(params[:id])
+      if @order.update(checked_by_admin: true)
+        render json: { code: 200, status: "OK", data: @order.attributes }, status: :ok
+      else
+        render json: { errors: @order.errors.full_messages }, status: :unprocessable_entity
+      end
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "Order tidak ditemukan" }, status: :not_found
     end
   end
 

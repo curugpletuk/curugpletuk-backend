@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
   before_action :authenticate_request!, except: %i[create email_verification show resend_verification]
-  before_action :authorize_admin, only: [:index, :show] 
+  before_action :authorize_admin, only: %i[:index, :show] 
   before_action :user_valid?, only: [:create]
   
   def index
@@ -9,8 +9,12 @@ class UsersController < ApplicationController
   end
 
   def show
-    @user = User.find(params[:id])
-    render json: { status: 200, data: @user.profile_attributes }, status: 200
+    begin
+      @user = User.find(params[:id])
+      render json: { status: 200, data: @user.profile_attributes }, status: 200
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "User tidak ditemukan" }, status: :not_found
+    end
   end
 
   def show_current_user

@@ -30,7 +30,7 @@ class Product < ApplicationRecord
 
   def update_product(params)
     if self.update(params)
-    { code: 200, status: "OK", message: "Produk telah diubah", data: self.product_attribute }
+    { code: 201, status: "CREATED", message: "Produk telah diubah", data: self.product_attribute }
     else
     { code: 422, status: "UNPROCESSABLE ENTITY", message: self.errors.full_messages }
     end

@@ -8,8 +8,12 @@ class ProductsController < ApplicationController
   end
 
   def show
-    product = Product.find(params[:id])
-    render json: { code: 200, status: "OK", data: product.product_attribute }, status: :ok
+    begin
+      product = Product.find(params[:id])
+      render json: { code: 200, status: "OK", data: product.product_attribute }, status: :ok
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "Produk tidak ditemukan" }, status: :not_found
+    end
   end
   
   def create
@@ -24,9 +28,16 @@ class ProductsController < ApplicationController
   end
 
   def destroy
-    product = Product.find(params[:id])
-    response = product.destroy_product
-    default_response(response)
+    begin
+      product = Product.find(params[:id])
+      response = product.destroy_product
+      default_response(response)
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "Produk tidak ditemukan" }, status: :not_found
+    end
+    # product = Product.find(params[:id])
+    # response = product.destroy_product
+    # default_response(response)
   end
 
   private
