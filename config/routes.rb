@@ -45,6 +45,7 @@ Rails.application.routes.draw do
   post "/products", to: "products#create"
   put "/products/update/:id", to: "products#update"
   delete "/products/destroy/:id", to: "products#destroy"
+  put "/products/delete_image/:id", to: "products#destroy_image"
 
 
   resources :users

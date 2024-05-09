@@ -15,17 +15,34 @@ class ProductsController < ApplicationController
       render json: { code: 404, status: "NOT FOUND", message: "Produk tidak ditemukan" }, status: :not_found
     end
   end
-  
+
   def create
-    product = Product.create_product(product_params, current_user)
+    product = Product.create_product(product_params, image_params, current_user)
     default_response(product)
   end
 
   def update
     product = Product.find(params[:id])
-    response = product.update_product(product_params)
+    response = product.update_product(product_params, image_params)
     default_response(response)
   end
+
+  def destroy_image
+    product = Product.find(params[:id])
+    response = product.delete_image
+    default_response(response)
+  end
+  
+  # def create
+  #   product = Product.create_product(product_params, current_user)
+  #   default_response(product)
+  # end
+
+  # def update
+  #   product = Product.find(params[:id])
+  #   response = product.update_product(product_params)
+  #   default_response(response)
+  # end
 
   def destroy
     begin
@@ -45,6 +62,10 @@ class ProductsController < ApplicationController
   def product_params
     # params.permit(:package_name, :price, :description, product_image: [:image])
     params.permit(:package_name, :price, :description)
+  end
+
+  def image_params
+    params.permit(:image)  # Assuming the image file is sent under product[image][file]
   end
 
 

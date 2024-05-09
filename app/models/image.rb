@@ -1,6 +1,6 @@
 class Image < ApplicationRecord
   attr_accessor :user_email
-
+  attr_accessor :product_id
   before_save :add_metadata_to_image
   mount_uploader :image, ImageUploader
   belongs_to :imageable, polymorphic: true

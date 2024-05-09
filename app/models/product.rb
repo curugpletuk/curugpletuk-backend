@@ -1,9 +1,12 @@
 class Product < ApplicationRecord
+  # after_create :build_product_image
   has_many :orders, dependent: :delete_all
   belongs_to :user
 
-  # has_one :product_image, as: :imageable, class_name: 'Image', dependent: :destroy
-  # accepts_nested_attributes_for :product_image, allow_destroy: true
+  has_one :product_image, as: :imageable, class_name: 'Image', dependent: :destroy
+  accepts_nested_attributes_for :product_image, allow_destroy: true
+  # has_one :image, as: :imageable, class_name: 'Image', dependent: :destroy
+  # accepts_nested_attributes_for :image, allow_destroy: true
 
   # validates :product_image, presence: { message: "harus diisi" }
   validates :package_name, presence: { message: "harus diisi" }
@@ -18,23 +21,57 @@ class Product < ApplicationRecord
     return { code: 200, status: "OK", data: { products: products} }
   end
 
-  def self.create_product(params, current_user)
+  def self.create_product(params, image_params, current_user)
     product = current_user.products.new(params)
+    product.build_product_image(image_params)
 
     if product.save
-    { code: 201, status: "CREATED", message: "Produk telah ditambahkan", data: product.product_attribute }
+      { code: 201, status: "CREATED", message: "Produk telah ditambahkan", data: product.product_attribute }
     else
-    { code: 422, status: "UNPROCESSABLE ENTITY", message: product.errors.full_messages }
+      { code: 422, status: "UNPROCESSABLE ENTITY", message: product.errors.full_messages }
     end
   end
 
-  def update_product(params)
-    if self.update(params)
-    { code: 201, status: "CREATED", message: "Produk telah diubah", data: self.product_attribute }
+  def update_product(params, image_params)
+    ActiveRecord::Base.transaction do
+
+      self.update!(params) if params.present?
+
+      self.product_image.update!(image_params) if image_params.present? && product_image.present?
+    end
+  
+    { code: 201, status: "CREATED", message: "Produk telah diubah", data: product_attribute }
+  rescue ActiveRecord::RecordInvalid => e
+    { code: 422, status: "UNPROCESSABLE ENTITY", message: e.record.errors.full_messages }
+  end
+
+  def delete_image
+    if product_image.update(image: nil)
+      product_image.product_id = self.id
+      return { code: 201, status: "CREATED", message: 'Foto Produk berhasil dihapus', data: product_attribute }
     else
-    { code: 422, status: "UNPROCESSABLE ENTITY", message: self.errors.full_messages }
+      error_messages = errors.messages.transform_values { |v| v.first }
+      return { code: 422, status: "UNPROCESSABLE ENTITY", message: error_messages }
     end
   end
+
+  # def self.create_product(params, current_user)
+  #   product = current_user.products.new(params)
+
+  #   if product.save
+  #   { code: 201, status: "CREATED", message: "Produk telah ditambahkan", data: product.product_attribute }
+  #   else
+  #   { code: 422, status: "UNPROCESSABLE ENTITY", message: product.errors.full_messages }
+  #   end
+  # end
+
+  # def update_product(params)
+  #   if self.update(params)
+  #   { code: 201, status: "CREATED", message: "Produk telah diubah", data: self.product_attribute }
+  #   else
+  #   { code: 422, status: "UNPROCESSABLE ENTITY", message: self.errors.full_messages }
+  #   end
+  # end
 
   def destroy_product
     if self.destroy
@@ -50,8 +87,13 @@ class Product < ApplicationRecord
       package_name: package_name,
       price: price,
       description: description,
-      # product_image: self.product_image&.image&.url
-      # product_image: self.product_image&.image_url  
+      product_image: self.product_image&.new_attribute
     }
   end
+
+     # if product_image&.respond_to?(:url) && product_image.product_image.present?
+    #   attributes.merge(product_image: product_image.url)
+    # else
+    #   attributes.merge(product_image: nil)
+    # end
 end
