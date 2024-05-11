@@ -1,14 +1,9 @@
 class Product < ApplicationRecord
-  # after_create :build_product_image
   has_many :orders, dependent: :delete_all
   belongs_to :user
 
   has_one :product_image, as: :imageable, class_name: 'Image', dependent: :destroy
   accepts_nested_attributes_for :product_image, allow_destroy: true
-  # has_one :image, as: :imageable, class_name: 'Image', dependent: :destroy
-  # accepts_nested_attributes_for :image, allow_destroy: true
-
-  # validates :product_image, presence: { message: "harus diisi" }
   validates :package_name, presence: { message: "harus diisi" }
   validates :package_name, length: { maximum: 100,  message: "tidak boleh lebih dari 100 karakter"}
   validates :price, presence: { message: "harus diisi" },
@@ -55,24 +50,6 @@ class Product < ApplicationRecord
     end
   end
 
-  # def self.create_product(params, current_user)
-  #   product = current_user.products.new(params)
-
-  #   if product.save
-  #   { code: 201, status: "CREATED", message: "Produk telah ditambahkan", data: product.product_attribute }
-  #   else
-  #   { code: 422, status: "UNPROCESSABLE ENTITY", message: product.errors.full_messages }
-  #   end
-  # end
-
-  # def update_product(params)
-  #   if self.update(params)
-  #   { code: 201, status: "CREATED", message: "Produk telah diubah", data: self.product_attribute }
-  #   else
-  #   { code: 422, status: "UNPROCESSABLE ENTITY", message: self.errors.full_messages }
-  #   end
-  # end
-
   def destroy_product
     if self.destroy
     { code: 200, status: "OK", message: "Produk telah dihapus" }
@@ -90,10 +67,4 @@ class Product < ApplicationRecord
       product_image: self.product_image&.new_attribute
     }
   end
-
-     # if product_image&.respond_to?(:url) && product_image.product_image.present?
-    #   attributes.merge(product_image: product_image.url)
-    # else
-    #   attributes.merge(product_image: nil)
-    # end
 end

@@ -15,12 +15,10 @@ class User < ApplicationRecord
   has_many :orders
   has_many :products, dependent: :destroy
 
-  # validates :name, presence: true
   validates :name, presence: { message: "Nama harus diisi"}
   validates :name, length: { maximum: 50,  message: "Nama tidak boleh lebih dari 50 karakter"}
   validates :name, format: { with: /\A(?!.*[0-9])(?!.*[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?])/, message: "Nama tidak boleh mengandung angka dan karakter khusus" }
   validates :email, presence: { message: "Email harus diisi"}, format: { with: /\A[\w+\-.]+@[a-z\d\-.]+\.[a-z]+\z/i, message: "Email harus sesuai format" }, uniqueness: true
-  # validates :email, presence: { message: "Email harus diisi"}, format: {with: URI::MailTo::EMAIL_REGEXP}
   validates :email, presence: { message: "Email harus diisi" }, format: { with: URI::MailTo::EMAIL_REGEXP, message: "Email harus sesuai format" }, uniqueness: true
   validates :email, length: { maximum: 50, message: "Email tidak boleh lebih dari 50 karakter" }
   validates :password, presence: { message: "Password harus di isi"}, if: -> { !skip_password_validation }
@@ -33,8 +31,6 @@ class User < ApplicationRecord
   validates :phone_number, format: { with: /\A08/, message: "Nomor Handphone harus diawali dengan '08'" }, allow_nil: true
   validates :phone_number, length: {minimum: 12, message: "Nomor Handphone tidak boleh kurang dari 12 digit"}, allow_nil: true
   validates :phone_number, length: {maximum: 16, message: "Nomor Handphone tidak boleh lebih dari 16 digit"}, allow_nil: true
-  # validates :role_id, presence: { message: "Role id harus diisi" }
-  # validates :role_id, inclusion: { in: [0, 1], message: "harus berupa 0 atau 1" }
   validates :role_id, presence: { message: "Role id harus diisi" }, numericality: { only_integer: true, message: "Role id harus berupa angka" }, inclusion: { in: [1, 2], message: "Role id harus berupa 1 untuk admin atau 2 untuk customer" }
 
   def resetting_password?
@@ -219,12 +215,7 @@ class User < ApplicationRecord
   def create_avatar
     self.build_avatar.save
   end
-  
-  # def update_total_points
-  #   transaction = Transaction.find_by(user_id: self.id)
-  #   transaction&.calculate_total_points if transaction
-  # end   
-
+    
   def delete_profile
     Image.update(image: "hey", imageable_id: self.imageable_id, imageable_type: self.imageable_type)
   end
