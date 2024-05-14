@@ -4,13 +4,16 @@ Aplikasi ini adalah sebuah platform berbasis web yang menyediakan endpoint untuk
 ## Framework 
 -   Ruby on Rails => Framework Ruby
 
+## Database
+-   PostgreSQL => Database System
+
 ## Tools
 -   VS Code => Code Editor
 -   Puma => Simulasi Web Server
 
 ## Other Library
--   Chart.Js => Library dengan JavaScript untuk grafik
--   JQuery
+-   Bcrypt => Menyediakan fungsionalitas untuk hashing password dan memverifikasi password menggunakan algoritma BCrypt.
+-   JSON Web Token => Memberikan keamanan data pada authorization token.
 
 ## Direktori Utama "app/"
 -   Folder app: Folder ini berisi kode utama aplikasi, termasuk MVC (Model, View, Controller), helper, mailer, jobs, dan assets.
