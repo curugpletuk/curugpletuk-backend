@@ -37,36 +37,36 @@ Aplikasi ini adalah sebuah platform berbasis web yang menyediakan endpoint untuk
 -   File README.md: File ini berisi penjelasan tentang proyek.
 
 ## Endpoint Aplikasi
-# Register/Sign up
+### Register/Sign up
 -   POST Create User: /auth/signup
 -   POST Resend Token Verification: /auth/resend
 -   GET Token Verification: /verification-account/?token_verification=(token verification)
 -   POST Reset Password: /forgot_password
 -   PATCH Reset Password: /update_password/(token reset password)
 -   GET Check Token Reset Password: /check_reset_token?reset_password_token=(token reset password)
-# Session
+### Session
 -   POST Login: /auth/login
 -   DELETE Logout: /auth/logout
 -   GET Current User: /me
 -   GET All Users: /users
 -   GET User by ID: /users/:id_user
-# Profile
+### Profile
 -   PUT Update Profile: /users/update_profile
 -   PUT Update Profile (Password Only): /users/update_password
 -   PUT Remove Avatar: /users/remove_avatar
 -   DELETE Delete User: /users/destroy
-# Order
+### Order
 -   GET All Orders: /orders
 -   GET Order by ID Order: /orders/:id_order
 -   GET Order by ID User: /check_user_order
 -   POST Create Order: /orders
 -   POST Checked Payment by Admin: /orders/:id_order/check_order 
-# Product
+### Product
 -   GET All Products: /products
 -   GET Product by ID Product: /products/:id_product
 -   POST Create Product: /products
 -   PUT Edit Product: /products/update/:id_product
 -   PUT Remove Product Image: /products/delete_image/:id_product
 -   DELETE Delete Product: /products/destroy/:id_product
-# Notification
+### Notification
 -   GET All Notification by User: /notifications
