@@ -28,9 +28,13 @@ class ProductsController < ApplicationController
   end
 
   def destroy_image
-    product = Product.find(params[:id])
-    response = product.delete_image
-    default_response(response)
+    begin
+      product = Product.find(params[:id])
+      response = product.delete_image
+      default_response(response)
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "Gambar produk tidak ditemukan" }, status: :not_found
+    end
   end
 
   def destroy
