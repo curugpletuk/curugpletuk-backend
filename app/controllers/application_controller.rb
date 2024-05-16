@@ -37,13 +37,13 @@ require 'dotenv/load'
 
   def authorize_admin
     unless current_user && current_user.role_id == 1
-      default_response({ code: 401, status: "UNAUTHORIZED", message: "You don't have access to this resource!"})
+      default_response({ code: 403, status: "FORBIDDEN", message: "You don't have access to this resource!"})
     end
   end
 
   def authorize_customer
     unless current_user && current_user.role_id == 2
-      default_response({ code: 401, status: "UNAUTHORIZED", message: "You don't have access to this resource!"})
+      default_response({ code: 403, status: "FORBIDDEN", message: "You don't have access to this resource!"})
     end
   end
 
