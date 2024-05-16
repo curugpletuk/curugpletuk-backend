@@ -33,7 +33,7 @@ class ProductsController < ApplicationController
       response = product.delete_image
       default_response(response)
     rescue ActiveRecord::RecordNotFound
-      render json: { code: 404, status: "NOT FOUND", message: "Gambar produk tidak ditemukan" }, status: :not_found
+      render json: { code: 404, status: "NOT FOUND", message: "Produk tidak ditemukan" }, status: :not_found
     end
   end
 
