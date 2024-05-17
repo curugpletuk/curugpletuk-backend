@@ -12,7 +12,7 @@ class Product < ApplicationRecord
   validates :description, length: { maximum: 500,  message: "tidak boleh lebih dari 500 karakter"}
 
   def self.get_all_products
-    products = Product.select("id, package_name, price, description")
+    products = Product.product_attribute
     return { code: 200, status: "OK", data: { products: products} }
   end
 

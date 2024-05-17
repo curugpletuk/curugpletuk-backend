@@ -3,8 +3,8 @@ class ProductsController < ApplicationController
   before_action :authorize_admin, except: %i[index show]
 
   def index
-    @products = Product.get_all_products
-    default_response4(@products)
+    @products = Product.all
+    render json: { code: 200, status: "OK", data: @products.map { |product| product.product_attribute } }, status: :ok
   end
 
   def show
@@ -22,9 +22,13 @@ class ProductsController < ApplicationController
   end
 
   def update
-    product = Product.find(params[:id])
-    response = product.update_product(product_params, image_params)
-    default_response(response)
+    begin
+      product = Product.find(params[:id])
+      response = product.update_product(product_params, image_params)
+      default_response(response)
+    rescue ActiveRecord::RecordNotFound
+      render json: { code: 404, status: "NOT FOUND", message: "Produk tidak ditemukan" }, status: :not_found
+    end
   end
 
   def destroy_image
