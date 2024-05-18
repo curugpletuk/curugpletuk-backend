@@ -1,6 +1,6 @@
 class OrdersController < ApplicationController
   before_action :authenticate_request!
-  before_action :authorize_admin, only: %i[index show checked_order]
+  before_action :authorize_admin, only: %i[index show checked_order orders_count]
   before_action :authorize_customer, only: %i[create]
 
   def index
@@ -15,6 +15,11 @@ class OrdersController < ApplicationController
     rescue ActiveRecord::RecordNotFound
       render json: { code: 404, status: "NOT FOUND", message: "Order tidak ditemukan" }, status: :not_found
     end
+  end
+
+  def orders_count
+    count = Order.count
+    render json: { code: 200, status: "OK", data: count }, status: :ok
   end
 
   def check_user_order

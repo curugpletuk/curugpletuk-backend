@@ -47,6 +47,10 @@ Rails.application.routes.draw do
   delete "/products/destroy/:id", to: "products#destroy"
   put "/products/delete_image/:id", to: "products#destroy_image"
 
+  #Count
+  get "product_count", to: "products#products_count"
+  get "order_count", to: "orders#orders_count"
+  get "user_count", to: "users#users_count"
 
   resources :users
   resources :products

@@ -16,6 +16,11 @@ class ProductsController < ApplicationController
     end
   end
 
+  def products_count
+    count = Product.count
+    render json: { code: 200, status: "OK", data: count }, status: :ok
+  end
+
   def create
     product = Product.create_product(product_params, image_params, current_user)
     default_response(product)
