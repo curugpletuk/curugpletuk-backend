@@ -234,6 +234,7 @@ class User < ApplicationRecord
   def destroy_with_sessions(current_user)
     if current_user
       Session.where(user_id: current_user.id).delete_all
+      Order.where(user_id: current_user.id).delete_all
       self.destroy
       return { code: 200, status: "OK", message: 'Data pengguna berhasil dihapus' }
     else
