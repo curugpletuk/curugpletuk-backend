@@ -59,11 +59,25 @@ class Order < ApplicationRecord
     return if set_date.blank?
     
     begin
-      DateTime.strptime(set_date.to_s, '%Y-%m-%d %H:%M')
+      parsed_date = DateTime.strptime(set_date.to_s, '%Y-%m-%d %H:%M')
+      
+      if parsed_date < DateTime.now.beginning_of_day
+        errors.add(:set_date, "tidak bisa memesan tiket untuk tanggal sebelum hari ini")
+      end
     rescue ArgumentError
       errors.add(:set_date, "set date tidak sesuai format")
     end
   end
+
+  # def set_date_format
+  #   return if set_date.blank?
+    
+  #   begin
+  #     DateTime.strptime(set_date.to_s, '%Y-%m-%d %H:%M')
+  #   rescue ArgumentError
+  #     errors.add(:set_date, "set date tidak sesuai format")
+  #   end
+  # end
 
   # def set_date_format
   #   return if set_date.blank? 
