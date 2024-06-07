@@ -12,7 +12,8 @@ class User < ApplicationRecord
   belongs_to :role
   has_one :avatar, as: :imageable, class_name: 'Image', dependent: :destroy
   has_many :notifications, dependent: :delete_all
-  has_many :orders
+  has_many :orders, dependent: :delete_all
+  has_many :sessions, dependent: :delete_all
   has_many :products, dependent: :destroy
 
   validates :name, presence: { message: "Nama harus diisi"}
@@ -235,7 +236,7 @@ class User < ApplicationRecord
     if current_user
       Session.where(user_id: current_user.id).delete_all
       Order.where(user_id: current_user.id).delete_all
-      self.destroy
+      current_user.destroy
       return { code: 200, status: "OK", message: 'Data pengguna berhasil dihapus' }
     else
       return { code: 422, status: "UNPROCESSABLE ENTITY", message: 'Gagal menghapus data pengguna' }
